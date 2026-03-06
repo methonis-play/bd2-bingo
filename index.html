@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bingo Card Generator</title>
+  <meta name="description" content="A shareable bingo card generator hosted on GitHub Pages." />
+  <style>
+    :root {
+      --bg: #0f1220;
+      --panel: #171b2e;
+      --panel-2: #1f2540;
+      --text: #f5f7ff;
+      --muted: #b9c0e0;
+      --accent: #7aa2ff;
+      --border: #3a436b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #0d1020 0%, #131832 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
+
+    .subtext {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    button {
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    button:hover {
+      filter: brightness(1.08);
+    }
+
+    .primary {
+      background: var(--accent);
+      color: #081225;
+      border-color: transparent;
+      font-weight: bold;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+      word-break: break-word;
+    }
+
+    .link-box {
+      flex: 1 1 280px;
+      min-width: 260px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .board-wrap {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .cell {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      min-height: 118px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+      font-weight: 700;
+      line-height: 1.2;
+      font-size: 0.98rem;
+      overflow-wrap: anywhere;
+    }
+
+    .free {
+      background: #2a355f;
+      color: #ffffff;
+      font-size: 1.1rem;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 760px) {
+      .container { padding: 14px; }
+      .board { gap: 6px; }
+      .cell {
+        min-height: 90px;
+        font-size: 0.82rem;
+        padding: 8px;
+      }
+      h1 { font-size: 1.5rem; }
+    }
+
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+      .toolbar, .subtext, .footer-note {
+        display: none !important;
+      }
+      .board-wrap {
+        border: none;
+        padding: 0;
+        background: white;
+      }
+      .cell {
+        min-height: 120px;
+        background: white;
+        color: black;
+        border: 2px solid black;
+      }
+      .free {
+        background: #efefef;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bingo Card Generator</h1>
+    <p class="subtext">
+      Click <strong>New Card</strong> to generate a fresh bingo card. Each card gets a shareable ID in the URL,
+      so anyone opening the same link sees the same card.
+    </p>
+
+    <div class="toolbar">
+      <button id="newCardBtn" class="primary">New Card</button>
+      <button id="copyLinkBtn">Copy Share Link</button>
+      <button id="printBtn">Print</button>
+      <div class="link-box">
+        <div class="meta"><strong>Card ID:</strong> <span id="cardIdText"></span></div>
+        <div class="meta"><strong>Share link:</strong> <span id="shareLinkText"></span></div>
+      </div>
+    </div>
+
+    <div class="board-wrap">
+      <div id="board" class="board"></div>
+      <div class="footer-note">Center square is a free space.</div>
+    </div>
+  </div>
+
+  <script>
+    const ENTRIES = [
+      "Mamonir release",
+      "Palette release",
+      "Hints at Valze later on",
+      "Mentions Levia and Luvencia in regard to the story chapters",
+      "Reveries/Iveloa lore tease",
+      "Reveries costume teasers for later on",
+      "More apologizing for no reason atp",
+      "Master and retcons are still happening",
+      "Every relationship they were gonna keep is now ALSO being changed!",
+      "More fishing updates",
+      "ID Card update (QoL and/or new stickers)",
+      "Ten minutes of yapping (maybe 20-30 since its an occasion)",
+      "Boobs and Ass",
+      "Edgelord Lathel 3.0 will NOT be playable",
+      "Olivier Fated Guest and they talk about the previous vision and how they reworked it",
+      "Taros Tactics Manual...?",
+      '"We\'re making Guild Raid and Fiend Hunter bosses goonbait from here on out and retiring the old designs"',
+      'Helena prestige "Special Skin"?',
+      "3 hour Q&A",
+      "Zenith prestige renewal",
+      "More story retconning",
+      "NEW MAP!!!",
+      "other Fantasia Square updates",
+      "Character reworks that do absolutely fucking nothing 🥺",
+      "They find another way to shoot veterans in the balls for the billionth time",
+      "One line description of what the new costume does, 10 minutes of yapping about how the costume looks.",
+      "Incomprehensible translations/descriptions"
+    ];
+
+    const SHORTEN_OVERRIDES = {
+      "Mentions Levia and Luvencia in regard to the story chapters": "Levia/Luvencia story mention",
+      "Reveries costume teasers for later on": "Reveries costume tease",
+      "More apologizing for no reason atp": "More pointless apologizing",
+      "Master and retcons are still happening": "Master + retcons still happening",
+      "Every relationship they were gonna keep is now ALSO being changed!": "More relationship changes",
+      "ID Card update (QoL and/or new stickers)": "ID Card update / stickers",
+      "Ten minutes of yapping (maybe 20-30 since its an occasion)": "10-30 mins of yapping",
+      "Edgelord Lathel 3.0 will NOT be playable": "Lathel 3.0 not playable",
+      "Olivier Fated Guest and they talk about the previous vision and how they reworked it": "Olivier FG rework talk",
+      '"We\'re making Guild Raid and Fiend Hunter bosses goonbait from here on out and retiring the old designs"': "GR/FH bosses redesign",
+      'Helena prestige "Special Skin"?': "Helena prestige skin?",
+      "other Fantasia Square updates": "Fantasia Square updates",
+      "Character reworks that do absolutely fucking nothing 🥺": "Useless character reworks",
+      "They find another way to shoot veterans in the balls for the billionth time": "Veterans get screwed again",
+      "One line description of what the new costume does, 10 minutes of yapping about how the costume looks.": "1 line effect, 10 mins yapping",
+      "Incomprehensible translations/descriptions": "Bad translations/descriptions"
+    };
+
+    const FREE_SPACE_TEXT = "FREE SPACE";
+    const BOARD_SIZE = 5;
+
+    function shortenEntry(text, maxLen = 28) {
+      if (SHORTEN_OVERRIDES[text]) return SHORTEN_OVERRIDES[text];
+      if (text.length <= maxLen) return text;
+
+      const replacements = [
+        [" and ", " & "],
+        [" in regard to ", " re: "],
+        [" for later on", " later"],
+        [" update ", " upd. "],
+        [" updates", " upd."],
+        [" descriptions", " desc."],
+        [" description", " desc."],
+        [" translations", " tls."],
+        [" minutes", " mins"],
+        [" minute", " min"]
+      ];
+
+      let out = text;
+      for (const [a, b] of replacements) {
+        out = out.replaceAll(a, b);
+      }
+      if (out.length <= maxLen) return out;
+      return out.slice(0, maxLen - 3) + "...";
+    }
+
+    function mulberry32(seed) {
+      return function () {
+        let t = (seed += 0x6D2B79F5);
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function hashStringToSeed(str) {
+      let h = 1779033703 ^ str.length;
+      for (let i = 0; i < str.length; i++) {
+        h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+        h = (h << 13) | (h >>> 19);
+      }
+      return () => {
+        h = Math.imul(h ^ (h >>> 16), 2246822507);
+        h = Math.imul(h ^ (h >>> 13), 3266489909);
+        return (h ^= h >>> 16) >>> 0;
+      };
+    }
+
+    function seededShuffle(array, seedText) {
+      const seedFn = hashStringToSeed(seedText);
+      const rand = mulberry32(seedFn());
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(rand() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function makeCardFromId(cardId) {
+      const shuffled = seededShuffle(ENTRIES, cardId);
+      const chosen = shuffled.slice(0, 24);
+      const card = [];
+      let idx = 0;
+
+      for (let r = 0; r < BOARD_SIZE; r++) {
+        const row = [];
+        for (let c = 0; c < BOARD_SIZE; c++) {
+          if (r === 2 && c === 2) {
+            row.push(FREE_SPACE_TEXT);
+          } else {
+            row.push(chosen[idx++]);
+          }
+        }
+        card.push(row);
+      }
+
+      return card;
+    }
+
+    function generateCardId() {
+      if (window.crypto && crypto.randomUUID) {
+        return crypto.randomUUID().split("-")[0];
+      }
+      return Math.random().toString(36).slice(2, 10);
+    }
+
+    function getCardIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("card") || generateCardId();
+    }
+
+    function setCardIdInUrl(cardId) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("card", cardId);
+      history.replaceState({}, "", url.toString());
+    }
+
+    function getShareLink(cardId) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("card", cardId);
+      return url.toString();
+    }
+
+    function renderCard(card, cardId) {
+      const board = document.getElementById("board");
+      board.innerHTML = "";
+
+      for (const row of card) {
+        for (const item of row) {
+          const cell = document.createElement("div");
+          cell.className = "cell" + (item === FREE_SPACE_TEXT ? " free" : "");
+          cell.textContent = item === FREE_SPACE_TEXT ? item : shortenEntry(item);
+          board.appendChild(cell);
+        }
+      }
+
+      const shareLink = getShareLink(cardId);
+      document.getElementById("cardIdText").textContent = cardId;
+      document.getElementById("shareLinkText").textContent = shareLink;
+    }
+
+    async function copyShareLink() {
+      const cardId = document.getElementById("cardIdText").textContent;
+      const shareLink = getShareLink(cardId);
+      try {
+        await navigator.clipboard.writeText(shareLink);
+        alert("Share link copied.");
+      } catch {
+        alert("Could not copy automatically. Copy this link manually:\n\n" + shareLink);
+      }
+    }
+
+    function loadCard(cardId) {
+      setCardIdInUrl(cardId);
+      const card = makeCardFromId(cardId);
+      renderCard(card, cardId);
+    }
+
+    document.getElementById("newCardBtn").addEventListener("click", () => {
+      loadCard(generateCardId());
+    });
+
+    document.getElementById("copyLinkBtn").addEventListener("click", copyShareLink);
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+    loadCard(getCardIdFromUrl());
+  </script>
+</body>
+</html>
