@@ -229,7 +229,7 @@
       user-select: none;
       cursor: pointer;
       position: relative;
-      transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+      transition: transform 0.12s ease, background 0.15s ease, border-color 0.12s ease, box-shadow 0.15s ease, filter 0.12s ease;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
       isolation: isolate;
     }
@@ -248,9 +248,18 @@
     }
 
     .cell:hover {
-      transform: translateY(-1px);
+      transform: translateY(-2px);
       background: var(--cell-hover);
       border-color: rgba(235, 206, 147, 0.45);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 6px 16px rgba(0,0,0,0.28);
+    }
+
+    /* Selected cells: show subtle deselect affordance on hover, no transform fight */
+    .cell.selected:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(180deg, rgba(242,212,146,0.85), rgba(191,126,48,0.85));
+      border-color: rgba(255,255,255,0.5);
+      filter: brightness(0.92);
     }
 
     .cell.selected {
@@ -276,6 +285,16 @@
         linear-gradient(180deg, rgba(126,84,174,0.95), rgba(66,45,95,0.98));
       color: #fff2da;
       font-size: 1.08rem;
+      cursor: default;
+    }
+
+    /* Free space should not respond to hover */
+    .cell.free:hover {
+      transform: none;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.12), transparent 30%),
+        linear-gradient(180deg, rgba(126,84,174,0.95), rgba(66,45,95,0.98));
+      border-color: rgba(231, 201, 138, 0.24);
     }
 
     .celebration {
@@ -391,6 +410,13 @@
         0 0 24px rgba(242, 207, 141, 0.45),
         0 10px 22px rgba(0,0,0,0.24);
       animation: winningPulse 1.35s ease-in-out infinite;
+    }
+
+    /* Winning cells: pause animation on hover to avoid jitter, use clean lift */
+    .cell.winning:hover {
+      animation-play-state: paused;
+      transform: translateY(-2px);
+      filter: brightness(1.1);
     }
 
     .cell.winning::before {
@@ -563,8 +589,16 @@
     }
 
     @keyframes winningPulse {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-1px); }
+      0%, 100% { filter: brightness(1); box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.18),
+        0 0 0 2px rgba(242, 207, 141, 0.35),
+        0 0 24px rgba(242, 207, 141, 0.45),
+        0 10px 22px rgba(0,0,0,0.24); }
+      50% { filter: brightness(1.08); box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.26),
+        0 0 0 3px rgba(242, 207, 141, 0.55),
+        0 0 36px rgba(242, 207, 141, 0.65),
+        0 10px 22px rgba(0,0,0,0.24); }
     }
 
     @keyframes confettiFall {
@@ -604,6 +638,7 @@
         <div style="width:44px; height:44px; border-radius:14px; border:1px solid rgba(192,124,255,.35); background:linear-gradient(180deg, rgba(192,124,255,.20), rgba(192,124,255,.05)); box-shadow:inset 0 0 16px rgba(255,255,255,.05);"></div>
       </div>
       <div class="brand-row">
+        <img src="https://www.browndust2.com/favicon.ico" alt="Brown Dust 2 icon" />
         <div>
           <div class="eyebrow">Full Burst Bingo</div>
           <h1>Brown Dust 2 Bingo</h1>
@@ -621,6 +656,7 @@
         <button id="copyMarkedLinkBtn">Copy Link with Marks</button>
         <button id="clearMarksBtn">Clear Marks</button>
         <button id="printBtn">Print</button>
+        <a class="button-link" href="https://www.browndust2.com/en-us/media" target="_blank" rel="noreferrer">Official Media</a>
       </div>
       <div class="meta-card">
         <div class="meta"><strong>Card ID:</strong> <span id="cardIdText"></span></div>
