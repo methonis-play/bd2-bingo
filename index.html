@@ -530,6 +530,32 @@
       text-shadow: 0 0 24px rgba(242,207,141,0.16);
     }
 
+    .modal-ending {
+      position: relative;
+      display: block;
+      margin: 10px 0 18px;
+      max-width: 36ch;
+      font-size: clamp(1.35rem, 3vw, 1.9rem);
+      line-height: 1.15;
+      font-weight: 800;
+      color: #ffe7a8;
+      text-shadow: 0 0 8px rgba(255, 215, 120, 0.35), 0 2px 10px rgba(0, 0, 0, 0.45);
+      z-index: 2;
+    }
+
+    .modal-corner-image {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      width: 150px;
+      max-width: 30%;
+      height: auto;
+      pointer-events: none;
+      user-select: none;
+      z-index: 1;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.45));
+    }
+
     .modal-text {
       position: relative;
       color: #f7e7c0;
@@ -589,6 +615,8 @@
       .modal-card { padding: 18px; }
       .modal-title { font-size: 2rem; }
       .win-badge { font-size: 0.62rem; }
+      .modal-ending { font-size: 1.2rem; max-width: 22ch; }
+      .modal-corner-image { width: 110px; }
     }
 
     @media print {
@@ -641,6 +669,8 @@
         <div class="modal-topline">Brown Dust 2 Bingo</div>
         <h2 id="modalTitle" class="modal-title">Bingo!</h2>
         <div id="modalText" class="modal-text"></div>
+        <div id="modalEnding" class="modal-ending" hidden></div>
+        <img id="modalCornerImage" class="modal-corner-image" src="assets/zenith.webp" alt="Zenith celebratory emote" hidden />
         <div class="modal-actions">
           <button id="modalCopyBtn" class="primary">Copy Link with Marks</button>
           <button id="modalCloseBtn" class="ghost-btn">Keep Marking</button>
