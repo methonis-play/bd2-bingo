@@ -3,144 +3,264 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bingo Card Generator</title>
-  <meta name="description" content="A shareable bingo card generator hosted on GitHub Pages." />
+  <title>Brown Dust 2 Bingo</title>
+  <link rel="icon" href="https://www.browndust2.com/favicon.ico" />
   <style>
     :root {
-      --bg: #0f1220;
-      --panel: #171b2e;
-      --panel-2: #1f2540;
-      --text: #f5f7ff;
-      --muted: #b9c0e0;
-      --accent: #7aa2ff;
-      --border: #3a436b;
+      --bg-1: #120f1d;
+      --bg-2: #201631;
+      --panel: rgba(21, 16, 33, 0.86);
+      --panel-2: rgba(37, 27, 55, 0.94);
+      --cell: rgba(33, 23, 46, 0.96);
+      --cell-hover: rgba(48, 34, 70, 0.98);
+      --cell-selected: linear-gradient(180deg, rgba(212,170,83,0.98), rgba(139,94,31,0.98));
+      --text: #f8f2e7;
+      --muted: #dbcbb0;
+      --accent: #d7b16a;
+      --accent-2: #8d5b1b;
+      --border: rgba(228, 197, 126, 0.33);
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.42);
+      --radius: 18px;
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg, #0d1020 0%, #131832 100%);
+      font-family: Georgia, "Times New Roman", serif;
       color: var(--text);
       min-height: 100vh;
+      background:
+        radial-gradient(circle at top, rgba(215, 177, 106, 0.12), transparent 28%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.03), transparent 26%),
+        radial-gradient(circle at 20% 10%, rgba(214,173,80,0.08), transparent 18%),
+        radial-gradient(circle at 80% 15%, rgba(214,173,80,0.06), transparent 14%);
     }
 
     .container {
-      max-width: 1100px;
+      position: relative;
+      max-width: 1180px;
       margin: 0 auto;
-      padding: 24px;
+      padding: 26px 18px 40px;
+    }
+
+    .hero {
+      background: linear-gradient(180deg, rgba(40, 28, 56, 0.9), rgba(24, 18, 37, 0.95));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 18px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(215,177,106,0.1), transparent 40%, rgba(215,177,106,0.07));
+      pointer-events: none;
+    }
+
+    .brand-row {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .brand-row img {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.8rem;
+      margin-bottom: 6px;
     }
 
     h1 {
-      margin: 0 0 8px;
-      font-size: 2rem;
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      line-height: 1;
     }
 
     .subtext {
-      margin: 0 0 20px;
+      margin: 12px 0 0;
       color: var(--muted);
-      line-height: 1.5;
+      line-height: 1.55;
+      max-width: 900px;
+      font-size: 1rem;
     }
 
     .toolbar {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      align-items: center;
-      margin-bottom: 20px;
-      background: rgba(255,255,255,0.04);
+      align-items: stretch;
+      margin-bottom: 18px;
+      background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       padding: 14px;
+      backdrop-filter: blur(10px);
     }
 
-    button {
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button, a.button-link {
       border: 1px solid var(--border);
       background: var(--panel-2);
       color: var(--text);
       padding: 10px 14px;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 0.95rem;
+      font-family: inherit;
+      text-decoration: none;
+      transition: transform 0.12s ease, filter 0.12s ease, background 0.12s ease;
     }
 
-    button:hover {
-      filter: brightness(1.08);
+    button:hover, a.button-link:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+      background: rgba(59, 42, 84, 0.98);
     }
 
     .primary {
-      background: var(--accent);
-      color: #081225;
-      border-color: transparent;
-      font-weight: bold;
+      background: linear-gradient(180deg, #f0cf8a, #be8842);
+      color: #251707;
+      border-color: rgba(255,255,255,0.25);
+      font-weight: 700;
+    }
+
+    .meta-card {
+      flex: 1 1 330px;
+      min-width: 280px;
+      background: rgba(16, 13, 25, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
     }
 
     .meta {
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 0.94rem;
+      line-height: 1.45;
       word-break: break-word;
     }
 
-    .link-box {
-      flex: 1 1 280px;
-      min-width: 260px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
+    .meta strong {
+      color: var(--text);
     }
 
     .board-wrap {
-      background: rgba(255,255,255,0.04);
+      background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 24px;
+      box-shadow: var(--shadow);
       padding: 18px;
+      backdrop-filter: blur(10px);
     }
 
     .board {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
     }
 
     .cell {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      min-height: 118px;
+      background: var(--cell);
+      border: 1px solid rgba(231, 201, 138, 0.24);
+      border-radius: 16px;
+      min-height: 122px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 10px;
       font-weight: 700;
-      line-height: 1.2;
+      line-height: 1.22;
       font-size: 0.98rem;
       overflow-wrap: anywhere;
+      user-select: none;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .cell:hover {
+      transform: translateY(-1px);
+      background: var(--cell-hover);
+      border-color: rgba(235, 206, 147, 0.45);
+    }
+
+    .cell.selected {
+      background: var(--cell-selected);
+      color: #231405;
+      border-color: rgba(255,255,255,0.35);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15), 0 10px 22px rgba(0,0,0,0.24);
+    }
+
+    .cell.selected::after {
+      content: "✓";
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 0.95rem;
+      font-weight: bold;
     }
 
     .free {
-      background: #2a355f;
-      color: #ffffff;
-      font-size: 1.1rem;
+      background: linear-gradient(180deg, rgba(111,74,151,0.95), rgba(66,45,95,0.98));
+      color: #fff2da;
+      font-size: 1.08rem;
     }
 
     .footer-note {
       margin-top: 14px;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .footer-note a {
+      color: var(--accent);
     }
 
     @media (max-width: 760px) {
-      .container { padding: 14px; }
-      .board { gap: 6px; }
+      .container { padding: 14px 12px 30px; }
+      .board { gap: 7px; }
       .cell {
-        min-height: 90px;
+        min-height: 95px;
         font-size: 0.82rem;
         padding: 8px;
+        border-radius: 12px;
       }
-      h1 { font-size: 1.5rem; }
+      .toolbar { padding: 12px; }
+      .hero { padding: 18px; }
     }
 
     @media print {
@@ -148,47 +268,70 @@
         background: white;
         color: black;
       }
-      .toolbar, .subtext, .footer-note {
+      body::before,
+      .toolbar,
+      .subtext,
+      .footer-note,
+      .eyebrow {
         display: none !important;
       }
+      .hero,
       .board-wrap {
         border: none;
         padding: 0;
         background: white;
+        box-shadow: none;
       }
+      .brand-row img { display: none; }
+      h1 { color: black; }
       .cell {
         min-height: 120px;
-        background: white;
-        color: black;
+        background: white !important;
+        color: black !important;
         border: 2px solid black;
+        box-shadow: none;
       }
-      .free {
-        background: #efefef;
-      }
+      .cell.selected::after { color: black; }
+      .free { background: #efefef !important; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Bingo Card Generator</h1>
-    <p class="subtext">
-      Click <strong>New Card</strong> to generate a fresh bingo card. Each card gets a shareable ID in the URL,
-      so anyone opening the same link sees the same card.
-    </p>
+    <section class="hero">
+      <div class="brand-row">
+        <img src="https://www.browndust2.com/favicon.ico" alt="Brown Dust 2 icon" />
+        <div>
+          <div class="eyebrow">Full Burst Bingo</div>
+          <h1>Brown Dust 2 Bingo</h1>
+        </div>
+      </div>
+      <p class="subtext">
+        Generate a new bingo board for each stream or dev note, click squares to mark them, and share the exact same card with a link. If you also want to share progress, use <strong>Copy Link with Marks</strong>.
+      </p>
+    </section>
 
     <div class="toolbar">
-      <button id="newCardBtn" class="primary">New Card</button>
-      <button id="copyLinkBtn">Copy Share Link</button>
-      <button id="printBtn">Print</button>
-      <div class="link-box">
+      <div class="button-group">
+        <button id="newCardBtn" class="primary">New Card</button>
+        <button id="copyLinkBtn">Copy Card Link</button>
+        <button id="copyMarkedLinkBtn">Copy Link with Marks</button>
+        <button id="clearMarksBtn">Clear Marks</button>
+        <button id="printBtn">Print</button>
+        <a class="button-link" href="https://www.browndust2.com/en-us/media" target="_blank" rel="noreferrer">Official Media</a>
+      </div>
+      <div class="meta-card">
         <div class="meta"><strong>Card ID:</strong> <span id="cardIdText"></span></div>
         <div class="meta"><strong>Share link:</strong> <span id="shareLinkText"></span></div>
+        <div class="meta"><strong>Marks:</strong> <span id="marksText">None</span></div>
       </div>
     </div>
 
     <div class="board-wrap">
       <div id="board" class="board"></div>
-      <div class="footer-note">Center square is a free space.</div>
+      <div class="footer-note">
+        Center square is a free space. Theme uses public Brown Dust 2 branding assets and links to the official media / digital goodies pages.
+      </div>
     </div>
   </div>
 
@@ -244,11 +387,12 @@
 
     const FREE_SPACE_TEXT = "FREE SPACE";
     const BOARD_SIZE = 5;
+    let currentCardId = "";
+    let selectedIndices = new Set();
 
     function shortenEntry(text, maxLen = 28) {
       if (SHORTEN_OVERRIDES[text]) return SHORTEN_OVERRIDES[text];
       if (text.length <= maxLen) return text;
-
       const replacements = [
         [" and ", " & "],
         [" in regard to ", " re: "],
@@ -261,11 +405,8 @@
         [" minutes", " mins"],
         [" minute", " min"]
       ];
-
       let out = text;
-      for (const [a, b] of replacements) {
-        out = out.replaceAll(a, b);
-      }
+      for (const [a, b] of replacements) out = out.replaceAll(a, b);
       if (out.length <= maxLen) return out;
       return out.slice(0, maxLen - 3) + "...";
     }
@@ -308,26 +449,19 @@
       const chosen = shuffled.slice(0, 24);
       const card = [];
       let idx = 0;
-
       for (let r = 0; r < BOARD_SIZE; r++) {
         const row = [];
         for (let c = 0; c < BOARD_SIZE; c++) {
-          if (r === 2 && c === 2) {
-            row.push(FREE_SPACE_TEXT);
-          } else {
-            row.push(chosen[idx++]);
-          }
+          if (r === 2 && c === 2) row.push(FREE_SPACE_TEXT);
+          else row.push(chosen[idx++]);
         }
         card.push(row);
       }
-
       return card;
     }
 
     function generateCardId() {
-      if (window.crypto && crypto.randomUUID) {
-        return crypto.randomUUID().split("-")[0];
-      }
+      if (window.crypto && crypto.randomUUID) return crypto.randomUUID().split("-")[0];
       return Math.random().toString(36).slice(2, 10);
     }
 
@@ -336,61 +470,117 @@
       return params.get("card") || generateCardId();
     }
 
-    function setCardIdInUrl(cardId) {
-      const url = new URL(window.location.href);
-      url.searchParams.set("card", cardId);
-      history.replaceState({}, "", url.toString());
+    function encodeMarks() {
+      return [...selectedIndices].sort((a, b) => a - b).join("-");
     }
 
-    function getShareLink(cardId) {
+    function decodeMarks(value) {
+      if (!value) return new Set();
+      return new Set(
+        value
+          .split("-")
+          .map(v => Number(v))
+          .filter(v => Number.isInteger(v) && v >= 0 && v < 25)
+      );
+    }
+
+    function getMarksFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return decodeMarks(params.get("marks"));
+    }
+
+    function updateUrl(cardId, includeMarks = true) {
       const url = new URL(window.location.href);
       url.searchParams.set("card", cardId);
+      if (includeMarks && selectedIndices.size > 0) url.searchParams.set("marks", encodeMarks());
+      else url.searchParams.delete("marks");
+      history.replaceState({}, "", url.toString());
       return url.toString();
     }
 
-    function renderCard(card, cardId) {
+    function getShareLink(cardId, includeMarks = false) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("card", cardId);
+      if (includeMarks && selectedIndices.size > 0) url.searchParams.set("marks", encodeMarks());
+      else url.searchParams.delete("marks");
+      return url.toString();
+    }
+
+    function updateMeta() {
+      document.getElementById("cardIdText").textContent = currentCardId;
+      document.getElementById("shareLinkText").textContent = getShareLink(currentCardId, false);
+      document.getElementById("marksText").textContent = selectedIndices.size ? encodeMarks() : "None";
+    }
+
+    function toggleSelection(index) {
+      if (selectedIndices.has(index)) selectedIndices.delete(index);
+      else selectedIndices.add(index);
+      updateUrl(currentCardId, true);
+      renderCard(makeCardFromId(currentCardId));
+    }
+
+    function renderCard(card) {
       const board = document.getElementById("board");
       board.innerHTML = "";
+      let flatIndex = 0;
 
       for (const row of card) {
         for (const item of row) {
           const cell = document.createElement("div");
-          cell.className = "cell" + (item === FREE_SPACE_TEXT ? " free" : "");
+          const isSelected = selectedIndices.has(flatIndex) || item === FREE_SPACE_TEXT;
+          cell.className = "cell" + (item === FREE_SPACE_TEXT ? " free" : "") + (isSelected ? " selected" : "");
           cell.textContent = item === FREE_SPACE_TEXT ? item : shortenEntry(item);
+          if (item !== FREE_SPACE_TEXT) {
+            cell.title = "Click to mark/unmark this square";
+            cell.addEventListener("click", () => toggleSelection(flatIndex));
+          } else {
+            cell.title = "Free space";
+          }
           board.appendChild(cell);
+          flatIndex++;
         }
       }
 
-      const shareLink = getShareLink(cardId);
-      document.getElementById("cardIdText").textContent = cardId;
-      document.getElementById("shareLinkText").textContent = shareLink;
+      updateMeta();
     }
 
-    async function copyShareLink() {
-      const cardId = document.getElementById("cardIdText").textContent;
-      const shareLink = getShareLink(cardId);
+    async function copyText(text, successMessage) {
       try {
-        await navigator.clipboard.writeText(shareLink);
-        alert("Share link copied.");
+        await navigator.clipboard.writeText(text);
+        alert(successMessage);
       } catch {
-        alert("Could not copy automatically. Copy this link manually:\n\n" + shareLink);
+        alert("Could not copy automatically. Copy this link manually:\n\n" + text);
       }
     }
 
-    function loadCard(cardId) {
-      setCardIdInUrl(cardId);
-      const card = makeCardFromId(cardId);
-      renderCard(card, cardId);
+    function loadCard(cardId, marks = new Set()) {
+      currentCardId = cardId;
+      selectedIndices = new Set(marks);
+      updateUrl(cardId, true);
+      renderCard(makeCardFromId(cardId));
     }
 
     document.getElementById("newCardBtn").addEventListener("click", () => {
-      loadCard(generateCardId());
+      loadCard(generateCardId(), new Set());
     });
 
-    document.getElementById("copyLinkBtn").addEventListener("click", copyShareLink);
+    document.getElementById("copyLinkBtn").addEventListener("click", () => {
+      copyText(getShareLink(currentCardId, false), "Card link copied.");
+    });
+
+    document.getElementById("copyMarkedLinkBtn").addEventListener("click", () => {
+      copyText(getShareLink(currentCardId, true), "Card link with marks copied.");
+    });
+
+    document.getElementById("clearMarksBtn").addEventListener("click", () => {
+      selectedIndices = new Set();
+      updateUrl(currentCardId, false);
+      renderCard(makeCardFromId(currentCardId));
+    });
+
     document.getElementById("printBtn").addEventListener("click", () => window.print());
 
-    loadCard(getCardIdFromUrl());
+    loadCard(getCardIdFromUrl(), getMarksFromUrl());
   </script>
 </body>
 </html>
