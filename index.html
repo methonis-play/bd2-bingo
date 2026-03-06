@@ -225,11 +225,17 @@
       line-height: 1.22;
       font-size: 0.98rem;
       overflow-wrap: anywhere;
+      overflow: hidden;
       user-select: none;
       cursor: pointer;
       position: relative;
       transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      isolation: isolate;
+    }
+
+    .cell > * {
+      pointer-events: none;
     }
 
     .cell::before {
@@ -261,6 +267,7 @@
       right: 10px;
       font-size: 0.95rem;
       font-weight: bold;
+      pointer-events: none;
     }
 
     .free {
@@ -985,12 +992,23 @@
           const isSelected = selectedIndices.has(cellIndex) || item === FREE_SPACE_TEXT;
           const isWinning = winningIndices.has(cellIndex);
           cell.className = "cell" + (item === FREE_SPACE_TEXT ? " free" : "") + (isSelected ? " selected" : "") + (isWinning ? " winning" : "");
-          cell.textContent = item === FREE_SPACE_TEXT ? item : shortenEntry(item);
+
+          const cellLabel = document.createElement("span");
+          cellLabel.textContent = item === FREE_SPACE_TEXT ? item : shortenEntry(item);
+          cell.appendChild(cellLabel);
+
           if (item !== FREE_SPACE_TEXT) {
             cell.title = "Click to mark/unmark this square";
             cell.setAttribute("role", "button");
+            cell.setAttribute("tabindex", "0");
             cell.setAttribute("aria-pressed", String(isSelected));
             cell.addEventListener("click", () => toggleSelection(cellIndex));
+            cell.addEventListener("keydown", (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                toggleSelection(cellIndex);
+              }
+            });
           } else {
             cell.title = "Free space";
           }
