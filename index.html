@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Brown Dust 2 Bingo</title>
+  <link rel="icon" href="https://www.browndust2.com/favicon.ico" />
   <style>
     :root {
       --bg-1: #120f1d;
@@ -224,17 +225,11 @@
       line-height: 1.22;
       font-size: 0.98rem;
       overflow-wrap: anywhere;
-      overflow: hidden;
       user-select: none;
       cursor: pointer;
       position: relative;
       transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-      isolation: isolate;
-    }
-
-    .cell > * {
-      pointer-events: none;
     }
 
     .cell::before {
@@ -266,7 +261,6 @@
       right: 10px;
       font-size: 0.95rem;
       font-weight: bold;
-      pointer-events: none;
     }
 
     .free {
@@ -416,10 +410,8 @@
     .modal {
       position: fixed;
       inset: 0;
-      z-index: 30;
-      display: none;
-      opacity: 0;
       pointer-events: none;
+      z-index: 30;
     }
 
     .effects-layer,
@@ -467,15 +459,14 @@
     }
 
     .modal {
+      display: flex;
       align-items: center;
       justify-content: center;
+      opacity: 0;
       transition: opacity 180ms ease;
-      visibility: hidden;
     }
 
     .modal.show {
-      display: flex;
-      visibility: visible;
       opacity: 1;
       pointer-events: auto;
     }
@@ -535,11 +526,40 @@
       color: #f7e7c0;
       line-height: 1.55;
       font-size: 1rem;
-      margin-bottom: 18px;
-      max-width: 48ch;
+      margin-bottom: 12px;
+      max-width: 42ch;
+      z-index: 2;
+    }
+
+    .modal-ending {
+      position: relative;
+      display: block;
+      margin: 10px 0 18px;
+      max-width: 36ch;
+      font-size: clamp(1.35rem, 3vw, 1.9rem);
+      line-height: 1.15;
+      font-weight: 800;
+      color: #ffe7a8;
+      text-shadow: 0 0 8px rgba(255, 215, 120, 0.35), 0 2px 10px rgba(0, 0, 0, 0.45);
+      z-index: 2;
+    }
+
+    .modal-corner-image {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      width: 150px;
+      max-width: 30%;
+      height: auto;
+      pointer-events: none;
+      user-select: none;
+      z-index: 1;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.45));
     }
 
     .modal-actions {
+      position: relative;
+      z-index: 2;
       position: relative;
       display: flex;
       gap: 10px;
@@ -588,6 +608,8 @@
     @media (max-width: 760px) {
       .modal-card { padding: 18px; }
       .modal-title { font-size: 2rem; }
+      .modal-ending { font-size: 1.2rem; max-width: 22ch; }
+      .modal-corner-image { width: 110px; }
       .win-badge { font-size: 0.62rem; }
     }
 
@@ -601,7 +623,12 @@
 <body>
   <div class="container">
     <section class="hero">
+      <div class="hero-badges" aria-hidden="true" style="position:absolute; right:18px; bottom:16px; display:flex; gap:10px; opacity:.9;">
+        <div style="width:44px; height:44px; border-radius:14px; border:1px solid rgba(242,207,141,.45); background:linear-gradient(180deg, rgba(242,207,141,.22), rgba(242,207,141,.06)); box-shadow:inset 0 0 16px rgba(255,255,255,.05);"></div>
+        <div style="width:44px; height:44px; border-radius:14px; border:1px solid rgba(192,124,255,.35); background:linear-gradient(180deg, rgba(192,124,255,.20), rgba(192,124,255,.05)); box-shadow:inset 0 0 16px rgba(255,255,255,.05);"></div>
+      </div>
       <div class="brand-row">
+        <img src="https://www.browndust2.com/favicon.ico" alt="Brown Dust 2 icon" />
         <div>
           <div class="eyebrow">Full Burst Bingo</div>
           <h1>Brown Dust 2 Bingo</h1>
@@ -635,13 +662,15 @@
 
     <div id="effectsLayer" class="effects-layer" aria-hidden="true"></div>
     <div id="sparkleLayer" class="sparkle-layer" aria-hidden="true"></div>
-    <div id="victoryModal" class="modal" aria-hidden="true" hidden>
+    <div id="victoryModal" class="modal" aria-hidden="true">
       <div class="modal-backdrop" data-close-modal="true"></div>
       <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText">
         <div class="ribbon">Victory</div>
         <div class="modal-topline">Brown Dust 2 Bingo</div>
         <h2 id="modalTitle" class="modal-title">Bingo!</h2>
         <div id="modalText" class="modal-text"></div>
+        <div id="modalEnding" class="modal-ending" hidden></div>
+        <img id="modalCornerImage" class="modal-corner-image" src="assets/zenith.webp" alt="Zenith celebratory emote" hidden />
         <div class="modal-actions">
           <button id="modalCopyBtn" class="primary">Copy Link with Marks</button>
           <button id="modalCloseBtn" class="ghost-btn">Keep Marking</button>
@@ -652,7 +681,7 @@
     <div class="board-wrap">
       <div id="board" class="board"></div>
       <div class="footer-note">
-        Center square is a free space. Bingo square ideas from Velfern the lore master and cymmina. Blackout has a special message!
+        Center square is a free space. The theme layers official public Brown Dust 2 branding references with ornamental textures and shareable URL-based marks.
       </div>
     </div>
   </div>
@@ -901,7 +930,6 @@
 
     function openVictoryModal(lines, isFullClear = false) {
       const modal = document.getElementById("victoryModal");
-      modal.hidden = false;
       const modalTitle = document.getElementById("modalTitle");
       const modalText = document.getElementById("modalText");
       const names = describeWinningLines(lines);
@@ -909,7 +937,7 @@
 
       if (isFullClear) {
         modalTitle.textContent = "Full Board Cleared!";
-        modalText.textContent = `Every square is marked on card ${currentCardId}. You finished the entire board with ${winCount} winning lines: ${names.join(", ")}. This is the true full burst ending.`;
+        modalText.textContent = `Every square is marked on card ${currentCardId}. You finished the entire board with ${winCount} winning lines: ${names.join(", ")}. This is the true bingo goblin ending.`;
       } else {
         modalTitle.textContent = "Bingo!";
         const lead = winCount === 1 ? "You just landed your first bingo." : `You now have ${winCount} winning lines.`;
@@ -924,7 +952,6 @@
       const modal = document.getElementById("victoryModal");
       modal.classList.remove("show");
       modal.setAttribute("aria-hidden", "true");
-      modal.hidden = true;
     }
 
     function updateCelebration(previousWinningCount = 0, previousWasFullClear = false) {
@@ -991,23 +1018,12 @@
           const isSelected = selectedIndices.has(cellIndex) || item === FREE_SPACE_TEXT;
           const isWinning = winningIndices.has(cellIndex);
           cell.className = "cell" + (item === FREE_SPACE_TEXT ? " free" : "") + (isSelected ? " selected" : "") + (isWinning ? " winning" : "");
-
-          const cellLabel = document.createElement("span");
-          cellLabel.textContent = item === FREE_SPACE_TEXT ? item : shortenEntry(item);
-          cell.appendChild(cellLabel);
-
+          cell.textContent = item === FREE_SPACE_TEXT ? item : shortenEntry(item);
           if (item !== FREE_SPACE_TEXT) {
             cell.title = "Click to mark/unmark this square";
             cell.setAttribute("role", "button");
-            cell.setAttribute("tabindex", "0");
             cell.setAttribute("aria-pressed", String(isSelected));
             cell.addEventListener("click", () => toggleSelection(cellIndex));
-            cell.addEventListener("keydown", (event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                toggleSelection(cellIndex);
-              }
-            });
           } else {
             cell.title = "Free space";
           }
