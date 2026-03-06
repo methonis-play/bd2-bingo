@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Brown Dust 2 Bingo</title>
+  <link rel="icon" href="https://www.browndust2.com/favicon.ico" />
   <style>
     :root {
       --bg-1: #120f1d;
@@ -270,11 +271,59 @@
       font-size: 1.08rem;
     }
 
+    .celebration {
+      display: none;
+      margin: 0 0 16px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(242, 207, 141, 0.45);
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.12), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(192,124,255,0.18), transparent 22%),
+        linear-gradient(180deg, rgba(95, 56, 22, 0.92), rgba(48, 28, 18, 0.96));
+      box-shadow: 0 16px 40px rgba(0,0,0,0.28), inset 0 0 0 1px rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .celebration.show {
+      display: block;
+      animation: popIn 260ms ease-out;
+    }
+
+    .celebration::before {
+      content: "✦ ✦ ✦";
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      color: rgba(255, 239, 189, 0.95);
+      letter-spacing: 0.25em;
+      font-size: 1rem;
+    }
+
+    .celebration-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff0c7;
+      margin-bottom: 6px;
+    }
+
+    .celebration-text {
+      color: #f7e7c0;
+      line-height: 1.45;
+      font-size: 0.98rem;
+    }
+
     .footer-note {
       margin-top: 14px;
       color: var(--muted);
       font-size: 0.92rem;
       line-height: 1.45;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(-6px) scale(0.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .footer-note a {
@@ -325,6 +374,219 @@
       .cell.selected::after { color: black; }
       .free { background: #efefef !important; }
     }
+  
+
+    .cell.winning {
+      border-color: rgba(255, 244, 204, 0.95);
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.18),
+        0 0 0 2px rgba(242, 207, 141, 0.35),
+        0 0 24px rgba(242, 207, 141, 0.45),
+        0 10px 22px rgba(0,0,0,0.24);
+      animation: winningPulse 1.35s ease-in-out infinite;
+    }
+
+    .cell.winning::before {
+      border-color: rgba(255, 245, 214, 0.3);
+    }
+
+    .win-badge {
+      position: absolute;
+      bottom: 7px;
+      left: 8px;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(70, 32, 5, 0.82);
+      background: rgba(255,255,255,0.38);
+      border: 1px solid rgba(255,255,255,0.24);
+      border-radius: 999px;
+      padding: 2px 6px;
+      pointer-events: none;
+    }
+
+    .effects-layer,
+    .sparkle-layer,
+    .modal {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 30;
+    }
+
+    .effects-layer,
+    .sparkle-layer {
+      overflow: hidden;
+    }
+
+    .confetti {
+      position: absolute;
+      top: -10vh;
+      width: 12px;
+      height: 24px;
+      border-radius: 3px;
+      opacity: 0.95;
+      animation: confettiFall linear forwards;
+      box-shadow: 0 0 8px rgba(255,255,255,0.18);
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,249,222,0.95) 0%, rgba(255,229,150,0.72) 35%, rgba(255,229,150,0) 72%);
+      transform: scale(0.2);
+      animation: sparklePop 900ms ease-out forwards;
+      filter: drop-shadow(0 0 8px rgba(255,232,159,0.55));
+    }
+
+    .sparkle::before,
+    .sparkle::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 2px;
+      height: 18px;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,248,212,0.98), rgba(255,255,255,0));
+      border-radius: 999px;
+    }
+
+    .sparkle::after {
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+
+    .modal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 180ms ease;
+    }
+
+    .modal.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 7, 14, 0.6);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-card {
+      position: relative;
+      width: min(92vw, 620px);
+      border-radius: 26px;
+      padding: 24px;
+      border: 1px solid rgba(242, 207, 141, 0.45);
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.12), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(192,124,255,0.22), transparent 22%),
+        linear-gradient(180deg, rgba(64, 37, 25, 0.95), rgba(30, 20, 20, 0.98));
+      box-shadow: 0 28px 80px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+      overflow: hidden;
+      pointer-events: auto;
+      animation: modalRise 260ms ease-out;
+    }
+
+    .modal-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--pattern-diamonds), linear-gradient(90deg, rgba(242,207,141,0.07), transparent 40%, rgba(192,124,255,0.08));
+      opacity: 0.75;
+      pointer-events: none;
+    }
+
+    .modal-topline {
+      position: relative;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.78rem;
+      margin-bottom: 8px;
+    }
+
+    .modal-title {
+      position: relative;
+      font-size: clamp(2rem, 6vw, 3rem);
+      line-height: 0.95;
+      margin: 0 0 10px;
+      color: #fff0c7;
+      text-shadow: 0 0 24px rgba(242,207,141,0.16);
+    }
+
+    .modal-text {
+      position: relative;
+      color: #f7e7c0;
+      line-height: 1.55;
+      font-size: 1rem;
+      margin-bottom: 18px;
+      max-width: 48ch;
+    }
+
+    .modal-actions {
+      position: relative;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ghost-btn {
+      background: rgba(255,255,255,0.07);
+    }
+
+    .ribbon {
+      position: absolute;
+      top: 18px;
+      right: -34px;
+      transform: rotate(25deg);
+      background: linear-gradient(180deg, #f0cf8a, #be8842);
+      color: #251707;
+      padding: 6px 40px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      font-size: 0.74rem;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.22);
+    }
+
+    @keyframes winningPulse {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-1px); }
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0.98; }
+      100% { transform: translate3d(var(--drift, 0px), 115vh, 0) rotate(720deg); opacity: 0.15; }
+    }
+
+    @keyframes sparklePop {
+      0% { transform: scale(0.2); opacity: 0; }
+      18% { opacity: 1; }
+      100% { transform: scale(1.25); opacity: 0; }
+    }
+
+    @keyframes modalRise {
+      from { transform: translateY(12px) scale(0.97); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 760px) {
+      .modal-card { padding: 18px; }
+      .modal-title { font-size: 2rem; }
+      .win-badge { font-size: 0.62rem; }
+    }
+
+    @media print {
+      .effects-layer, .sparkle-layer, .modal, .celebration { display: none !important; }
+      .cell.winning { box-shadow: none; }
+      .win-badge { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -335,6 +597,7 @@
         <div style="width:44px; height:44px; border-radius:14px; border:1px solid rgba(192,124,255,.35); background:linear-gradient(180deg, rgba(192,124,255,.20), rgba(192,124,255,.05)); box-shadow:inset 0 0 16px rgba(255,255,255,.05);"></div>
       </div>
       <div class="brand-row">
+        <img src="https://www.browndust2.com/favicon.ico" alt="Brown Dust 2 icon" />
         <div>
           <div class="eyebrow">Full Burst Bingo</div>
           <h1>Brown Dust 2 Bingo</h1>
@@ -352,11 +615,33 @@
         <button id="copyMarkedLinkBtn">Copy Link with Marks</button>
         <button id="clearMarksBtn">Clear Marks</button>
         <button id="printBtn">Print</button>
+        <a class="button-link" href="https://www.browndust2.com/en-us/media" target="_blank" rel="noreferrer">Official Media</a>
       </div>
       <div class="meta-card">
         <div class="meta"><strong>Card ID:</strong> <span id="cardIdText"></span></div>
         <div class="meta"><strong>Share link:</strong> <span id="shareLinkText"></span></div>
         <div class="meta"><strong>Marks:</strong> <span id="marksText">None</span></div>
+      </div>
+    </div>
+
+    <div id="celebration" class="celebration" aria-live="polite">
+      <div class="celebration-title">Bingo!</div>
+      <div id="celebrationText" class="celebration-text"></div>
+    </div>
+
+    <div id="effectsLayer" class="effects-layer" aria-hidden="true"></div>
+    <div id="sparkleLayer" class="sparkle-layer" aria-hidden="true"></div>
+    <div id="victoryModal" class="modal" aria-hidden="true">
+      <div class="modal-backdrop" data-close-modal="true"></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText">
+        <div class="ribbon">Victory</div>
+        <div class="modal-topline">Brown Dust 2 Bingo</div>
+        <h2 id="modalTitle" class="modal-title">Bingo!</h2>
+        <div id="modalText" class="modal-text"></div>
+        <div class="modal-actions">
+          <button id="modalCopyBtn" class="primary">Copy Link with Marks</button>
+          <button id="modalCloseBtn" class="ghost-btn">Keep Marking</button>
+        </div>
       </div>
     </div>
 
@@ -539,30 +824,167 @@
       return url.toString();
     }
 
-    function updateMeta() {
+    function getAllLines() {
+      const lines = [];
+      for (let row = 0; row < BOARD_SIZE; row++) {
+        const line = [];
+        for (let col = 0; col < BOARD_SIZE; col++) line.push(row * BOARD_SIZE + col);
+        lines.push({ type: "row", index: row + 1, cells: line });
+      }
+      for (let col = 0; col < BOARD_SIZE; col++) {
+        const line = [];
+        for (let row = 0; row < BOARD_SIZE; row++) line.push(row * BOARD_SIZE + col);
+        lines.push({ type: "column", index: col + 1, cells: line });
+      }
+      lines.push({ type: "diagonal", index: 1, cells: [0, 6, 12, 18, 24] });
+      lines.push({ type: "diagonal", index: 2, cells: [4, 8, 12, 16, 20] });
+      return lines;
+    }
+
+    function getWinningLines() {
+      return getAllLines().filter(line => line.cells.every(index => index === 12 || selectedIndices.has(index)));
+    }
+
+    function getWinningIndexSet() {
+      const indices = new Set();
+      for (const line of getWinningLines()) {
+        for (const cell of line.cells) indices.add(cell);
+      }
+      return indices;
+    }
+
+    function describeWinningLines(lines) {
+      return lines.map(line => {
+        if (line.type === "row") return `Row ${line.index}`;
+        if (line.type === "column") return `Column ${line.index}`;
+        return line.index === 1 ? "Main diagonal" : "Reverse diagonal";
+      });
+    }
+
+    function fireConfetti(count = 36) {
+      const layer = document.getElementById("effectsLayer");
+      const colors = ["#f1d28d", "#c07cff", "#fff0c7", "#c98a42", "#8d6aff"];
+      for (let i = 0; i < count; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti";
+        piece.style.left = `${Math.random() * 100}vw`;
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = `${4 + Math.random() * 2.4}s`;
+        piece.style.animationDelay = `${Math.random() * 0.25}s`;
+        piece.style.setProperty("--drift", `${-120 + Math.random() * 240}px`);
+        piece.style.transform = `translate3d(0,0,0) rotate(${Math.random()*360}deg)`;
+        layer.appendChild(piece);
+        setTimeout(() => piece.remove(), 7000);
+      }
+    }
+
+    function spawnSparkles() {
+      const layer = document.getElementById("sparkleLayer");
+      for (let i = 0; i < 18; i++) {
+        const sparkle = document.createElement("div");
+        sparkle.className = "sparkle";
+        sparkle.style.left = `${10 + Math.random() * 80}vw`;
+        sparkle.style.top = `${8 + Math.random() * 60}vh`;
+        sparkle.style.animationDelay = `${Math.random() * 200}ms`;
+        layer.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 1200);
+      }
+    }
+
+    function isFullBoardCleared() {
+      return selectedIndices.size >= 24;
+    }
+
+    function openVictoryModal(lines, isFullClear = false) {
+      const modal = document.getElementById("victoryModal");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalText = document.getElementById("modalText");
+      const names = describeWinningLines(lines);
+      const winCount = lines.length;
+
+      if (isFullClear) {
+        modalTitle.textContent = "Full Board Cleared!";
+        modalText.textContent = `Every square is marked on card ${currentCardId}. You finished the entire board with ${winCount} winning lines: ${names.join(", ")}. This is the true bingo goblin ending.`;
+      } else {
+        modalTitle.textContent = "Bingo!";
+        const lead = winCount === 1 ? "You just landed your first bingo." : `You now have ${winCount} winning lines.`;
+        modalText.textContent = `${lead} Completed: ${names.join(", ")}. Share the marked card or keep going for a full-board flex.`;
+      }
+
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeVictoryModal() {
+      const modal = document.getElementById("victoryModal");
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    function updateCelebration(previousWinningCount = 0, previousWasFullClear = false) {
+      const celebration = document.getElementById("celebration");
+      const celebrationText = document.getElementById("celebrationText");
+      const winningLines = getWinningLines();
+      const fullClear = isFullBoardCleared();
+
+      if (winningLines.length === 0) {
+        celebration.classList.remove("show");
+        celebrationText.textContent = "";
+        closeVictoryModal();
+        return;
+      }
+
+      const names = describeWinningLines(winningLines);
+      const lineLabel = winningLines.length === 1 ? "winning line" : "winning lines";
+      if (fullClear) {
+        celebrationText.textContent = `Full board cleared on card ${currentCardId}. All 24 non-free squares are marked, with ${winningLines.length} ${lineLabel}: ${names.join(", ")}.`;
+      } else {
+        celebrationText.textContent = `You hit ${winningLines.length} ${lineLabel} on card ${currentCardId}. Completed: ${names.join(", ")}.`;
+      }
+      celebration.classList.add("show");
+
+      if (fullClear && !previousWasFullClear) {
+        fireConfetti(120);
+        spawnSparkles();
+        setTimeout(() => fireConfetti(90), 250);
+        setTimeout(() => spawnSparkles(), 180);
+        openVictoryModal(winningLines, true);
+      } else if (winningLines.length > previousWinningCount) {
+        fireConfetti(34 + winningLines.length * 8);
+        spawnSparkles();
+        openVictoryModal(winningLines, false);
+      }
+    }
+
+    function updateMeta(previousWinningCount = 0, previousWasFullClear = false) {
       document.getElementById("cardIdText").textContent = currentCardId;
       document.getElementById("shareLinkText").textContent = getShareLink(currentCardId, false);
       document.getElementById("marksText").textContent = selectedIndices.size ? encodeMarks() : "None";
+      updateCelebration(previousWinningCount, previousWasFullClear);
     }
 
     function toggleSelection(index) {
+      const previousWinningCount = getWinningLines().length;
+      const previousWasFullClear = isFullBoardCleared();
       if (selectedIndices.has(index)) selectedIndices.delete(index);
       else selectedIndices.add(index);
       updateUrl(currentCardId, true);
-      renderCard(makeCardFromId(currentCardId));
+      renderCard(makeCardFromId(currentCardId), previousWinningCount, previousWasFullClear);
     }
 
-    function renderCard(card) {
+    function renderCard(card, previousWinningCount = 0, previousWasFullClear = false) {
       const board = document.getElementById("board");
       board.innerHTML = "";
       let flatIndex = 0;
+      const winningIndices = getWinningIndexSet();
 
       for (const row of card) {
         for (const item of row) {
           const cell = document.createElement("div");
           const cellIndex = flatIndex;
           const isSelected = selectedIndices.has(cellIndex) || item === FREE_SPACE_TEXT;
-          cell.className = "cell" + (item === FREE_SPACE_TEXT ? " free" : "") + (isSelected ? " selected" : "");
+          const isWinning = winningIndices.has(cellIndex);
+          cell.className = "cell" + (item === FREE_SPACE_TEXT ? " free" : "") + (isSelected ? " selected" : "") + (isWinning ? " winning" : "");
           cell.textContent = item === FREE_SPACE_TEXT ? item : shortenEntry(item);
           if (item !== FREE_SPACE_TEXT) {
             cell.title = "Click to mark/unmark this square";
@@ -572,12 +994,18 @@
           } else {
             cell.title = "Free space";
           }
+          if (isWinning) {
+            const badge = document.createElement("div");
+            badge.className = "win-badge";
+            badge.textContent = "Bingo";
+            cell.appendChild(badge);
+          }
           board.appendChild(cell);
           flatIndex++;
         }
       }
 
-      updateMeta();
+      updateMeta(previousWinningCount, previousWasFullClear);
     }
 
     async function copyText(text, successMessage) {
@@ -593,7 +1021,7 @@
       currentCardId = cardId;
       selectedIndices = new Set(marks);
       updateUrl(cardId, true);
-      renderCard(makeCardFromId(cardId));
+      renderCard(makeCardFromId(cardId), 0, false);
     }
 
     document.getElementById("newCardBtn").addEventListener("click", () => {
@@ -610,11 +1038,22 @@
 
     document.getElementById("clearMarksBtn").addEventListener("click", () => {
       selectedIndices = new Set();
+      closeVictoryModal();
       updateUrl(currentCardId, false);
-      renderCard(makeCardFromId(currentCardId));
+      renderCard(makeCardFromId(currentCardId), 0);
     });
 
     document.getElementById("printBtn").addEventListener("click", () => window.print());
+    document.getElementById("modalCopyBtn").addEventListener("click", () => {
+      copyText(getShareLink(currentCardId, true), "Card link with marks copied.");
+    });
+    document.getElementById("modalCloseBtn").addEventListener("click", closeVictoryModal);
+    document.getElementById("victoryModal").addEventListener("click", (event) => {
+      if (event.target && event.target.dataset && event.target.dataset.closeModal === "true") closeVictoryModal();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeVictoryModal();
+    });
 
     loadCard(getCardIdFromUrl(), getMarksFromUrl());
   </script>
